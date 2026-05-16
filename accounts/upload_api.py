@@ -101,8 +101,19 @@ class UserCSVUploadAPIView(APIView):
                 phone=row.get("phone"),
                 manager=uploader if uploader.role == "admin" else None
             )
-            user.set_password("user@123")
+            raw_password = generate_password()
+            user.set_password(raw_password)
             user.save()
+            
+            if user.email:
+                try:
+                    send_user_credentials(
+                        user.email,
+                        user.username,
+                        raw_password
+                    )
+                except Exception as e:
+                    pass
 
             super_manager_map[user.username] = user
             created_users.append(user)
@@ -209,8 +220,19 @@ class UserCSVUploadAPIView(APIView):
                 phone=row.get("phone"),
                 manager=manager
             )
-            user.set_password("user@123")
+            raw_password = generate_password()
+            user.set_password(raw_password)
             user.save()
+            
+            if user.email:
+                try:
+                    send_user_credentials(
+                        user.email,
+                        user.username,
+                        raw_password
+                    )
+                except Exception as e:
+                    pass
 
             created_users.append(user)
 
